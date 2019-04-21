@@ -1,6 +1,11 @@
 # DSK2ROM v0.80
 Copyright 2007 Vincent van Dam
 
+Home pages:
+
+ * http://home.kabelfoon.nl/~vincentd/
+ * https://github.com/joyrex2001/dsk2rom
+
 This is an adjusted MSX diskrom that loads sectors from rom instead of a disk.
 It can be used to convert .dsk images to .rom images. The converted .rom images
 will act as a read only drive. If another diskinterface is present, it will be
