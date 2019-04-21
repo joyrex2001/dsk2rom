@@ -1,6 +1,11 @@
 # DSK2ROM v0.80
 Copyright 2007 Vincent van Dam
 
+Home pages:
+
+ * http://home.kabelfoon.nl/~vincentd/
+ * https://github.com/joyrex2001/dsk2rom
+
 This is an adjusted MSX diskrom that loads sectors from rom instead of a disk.
 It can be used to convert .dsk images to .rom images. The converted .rom images
 will act as a read only drive. If another diskinterface is present, it will be
@@ -14,9 +19,9 @@ and switching of mapper type).
 To convert .dsk images to .rom images without the dsk2rom tool; use the
 following commands:
 
- * MSXDOS 2:         concat /b dsk2rom.rom+<dskfile> <romfile>  
- * Windows/MS-DOS:   copy /b dsk2rom.rom+<dskfile> <romfile>  
- * Unix:             cat dsk2rom.rom <dskfile> > <romfile>
+ * MSXDOS 2:         `concat /b dsk2rom.rom+<dskfile> <romfile>`
+ * Windows/MS-DOS:   `copy /b dsk2rom.rom+<dskfile> <romfile>`
+ * Unix:             `cat dsk2rom.rom <dskfile> > <romfile>`
 
 The mapper that is used is for the converted rom without using the dsk2rom tool
 itself is 'KonamiSCC'.
@@ -26,10 +31,10 @@ available. The dsk2rom tool is a command-line tool with a few options. The
 available options will be displayed when the tool is started with no arguments
 at all.
 
-Exanples converting .dsk image to .rom images using the dsk2rom tool;
+Examples converting .dsk image to .rom images using the dsk2rom tool;
 
- * dsk2rom -f6c 2 alesteg.dsk alesteg.rom
- * dsk2rom -sfc 2 feedback.dsk feedback.rom
+ * `dsk2rom -f6c 2 alesteg.dsk alesteg.rom`
+ * `dsk2rom -sfc 2 feedback.dsk feedback.rom`
 
 The most interesting option is compression (-c), it should be followed by a
 number which defines which compression should be used. Compression level 0
