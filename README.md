@@ -14,9 +14,9 @@ and switching of mapper type).
 To convert .dsk images to .rom images without the dsk2rom tool; use the
 following commands:
 
- * MSXDOS 2:         concat /b dsk2rom.rom+<dskfile> <romfile>  
- * Windows/MS-DOS:   copy /b dsk2rom.rom+<dskfile> <romfile>  
- * Unix:             cat dsk2rom.rom <dskfile> > <romfile>
+ * MSXDOS 2:         `concat /b dsk2rom.rom+<dskfile> <romfile>`
+ * Windows/MS-DOS:   `copy /b dsk2rom.rom+<dskfile> <romfile>`
+ * Unix:             `cat dsk2rom.rom <dskfile> > <romfile>`
 
 The mapper that is used is for the converted rom without using the dsk2rom tool
 itself is 'KonamiSCC'.
@@ -28,8 +28,8 @@ at all.
 
 Examples converting .dsk image to .rom images using the dsk2rom tool;
 
- * dsk2rom -f6c 2 alesteg.dsk alesteg.rom
- * dsk2rom -sfc 2 feedback.dsk feedback.rom
+ * `dsk2rom -f6c 2 alesteg.dsk alesteg.rom`
+ * `dsk2rom -sfc 2 feedback.dsk feedback.rom`
 
 The most interesting option is compression (-c), it should be followed by a
 number which defines which compression should be used. Compression level 0
