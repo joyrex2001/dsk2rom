@@ -26,7 +26,7 @@ available. The dsk2rom tool is a command-line tool with a few options. The
 available options will be displayed when the tool is started with no arguments
 at all.
 
-Exanples converting .dsk image to .rom images using the dsk2rom tool;
+Examples converting .dsk image to .rom images using the dsk2rom tool;
 
  * dsk2rom -f6c 2 alesteg.dsk alesteg.rom
  * dsk2rom -sfc 2 feedback.dsk feedback.rom
