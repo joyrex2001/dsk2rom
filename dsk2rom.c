@@ -38,17 +38,17 @@ typedef struct {
 void showUsage(char *progname)
 {
   printf("usage: %s [-c 0..2] [-a56pdsfv] <ifile> <ofile>\n"
-	 " -c   compression level (0-2, where 0 is uncompressed)\n"
-	 " -a   use ascii8 mapper instead of konami scc\n"
-	 " -5   switch to pal (50Hz) when booting the ROM on MSX2 and up\n"
-	 " -6   switch to ntsc (60Hz) when booting the ROM on MSX2 and up\n"
-	 " -p   change to MSX1 palette when booting the ROM on MSX2 and up\n"
-	 " -d   disable exclusive diskrom mode (other diskroms will boot too)\n"
-	 " -s   safe mode (protect against illegal bank switching)\n"
-	 " -f   fill up rom to standard rom size\n"
-	 " -v   give verbose information\n", progname);
+         " -c   compression level (0-2, where 0 is uncompressed)\n"
+         " -a   use ascii8 mapper instead of konami scc\n"
+         " -5   switch to pal (50Hz) when booting the ROM on MSX2 and up\n"
+         " -6   switch to ntsc (60Hz) when booting the ROM on MSX2 and up\n"
+         " -p   change to MSX1 palette when booting the ROM on MSX2 and up\n"
+         " -d   disable exclusive diskrom mode (other diskroms will boot too)\n"
+         " -s   safe mode (protect against illegal bank switching)\n"
+         " -f   fill up rom to standard rom size\n"
+         " -v   give verbose information\n", progname);
   return;
-}  
+}
 
 /**************/
 /* go for it! */
@@ -99,18 +99,18 @@ int main(int argc, char* argv[])
     if (argv[i][0]=='-') {
 
       for(j=1;j && argv[i][j]!='\0';j++)
-	
+
         switch(argv[i][j]) {
-	  
-	case 'c': compress_mode=atoi(argv[++i]); j=-1; break;
-	case 'f': fillup_rom=1; break;
-	case '5': pal_mode=1; break;
-	case '6': ntsc_mode=1; break;
-	case 'p': msx1_palette=1; break;
-	case 'a': ascii_mapper=1; break;
-	case 'd': exclusive_mode=0; break;
-	case 's': safe_mode=1; break;
-	case 'v': verbose=1; break;
+
+        case 'c': compress_mode=atoi(argv[++i]); j=-1; break;
+        case 'f': fillup_rom=1; break;
+        case '5': pal_mode=1; break;
+        case '6': ntsc_mode=1; break;
+        case 'p': msx1_palette=1; break;
+        case 'a': ascii_mapper=1; break;
+        case 'd': exclusive_mode=0; break;
+        case 's': safe_mode=1; break;
+        case 'v': verbose=1; break;
 
         default:
           fprintf(stderr,"%s: invalid option\n",argv[0]);
@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
 
     if (ifile==NULL) { ifile=argv[i]; continue; }
     if (ofile==NULL) { ofile=argv[i]; continue; }
-    
+
     fprintf(stderr,"%s: invalid option\n",argv[0]);
     exit(1);
   }
@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
   }
 
   /* determine number of sectors within image and initialize buffers*/
-  fseek(input,0,SEEK_END); 
+  fseek(input,0,SEEK_END);
   total_sectors = ftell(input)/sector_size;
   fseek(input,0,SEEK_SET);
 
@@ -176,7 +176,7 @@ int main(int argc, char* argv[])
     }
 
     if (verbose) printf(" - size %d (%.2f%%)",plet_size,
-			           100-(float)plet_size/sector_size*100.0);
+                   100-(float)plet_size/sector_size*100.0);
 
     total_size += plet_size;
 
@@ -195,12 +195,12 @@ int main(int argc, char* argv[])
     sector_hash[sector] = sector;
     if (compress_mode>=1)
       for(i=0;i<sector;i++)
-	if(!memcmp(sector_data[i]->data,sector_data[sector]->data,plet_size)) {
-	  if (verbose) printf(" (hashed as %d)",i);
-	  sector_hash[sector] = i;
-	  total_size -= plet_size;
-	  break;
-	}
+        if(!memcmp(sector_data[i]->data,sector_data[sector]->data,plet_size)) {
+          if (verbose) printf(" (hashed as %d)",i);
+          sector_hash[sector] = i;
+          total_size -= plet_size;
+          break;
+        }
 
     if (verbose) printf("\n");
   }
@@ -224,19 +224,19 @@ int main(int argc, char* argv[])
     i = 0x3fb0;
     do{ address = dsk2rom[i]+dsk2rom[i+1]*256; i=i+2;
       if (address) {
-	dsk2rom[address-0x4000+1]=0x60; /* 6000 page 1 vs 5000 page 1 */
-	if (verbose) printf("patching kernel %.4x for ascii mapper\n",address);
+        dsk2rom[address-0x4000+1]=0x60; /* 6000 page 1 vs 5000 page 1 */
+        if (verbose) printf("patching kernel %.4x for ascii mapper\n",address);
       }
     } while (address);
     /* patch page 2 mapper switches */
     do{ address = dsk2rom[i]+dsk2rom[i+1]*256; i=i+2;
       if (address) {
-	dsk2rom[address-0x4000+1]=0x68; /* 6800 page 2 vs 7000 page 2 */
-	if (verbose) printf("patching kernel %.4x for ascii mapper\n",address);
+        dsk2rom[address-0x4000+1]=0x68; /* 6800 page 2 vs 7000 page 2 */
+        if (verbose) printf("patching kernel %.4x for ascii mapper\n",address);
       }
     } while (address);
   }
-  
+
   /* calculate locations and sizes of dynamic parts */
   safe_patch_offset = dsk2rom[0x3fa0]+dsk2rom[0x3fa1]*256 - 0x4000;
   safe_patch_size   = safe_mode? dsk2rom[0x3fa2]+dsk2rom[0x3fa3]*256 : 0;
@@ -270,15 +270,15 @@ int main(int argc, char* argv[])
     /* safe mode; make sure diskrom api is available on every page */
     if (safe_mode)
       for (i=0;i<safe_patch_size;i++)
-	fputc(dsk2rom[safe_patch_offset+i],output);
+        fputc(dsk2rom[safe_patch_offset+i],output);
 
     /* create index */
     for(sector=0;sector<total_sectors;sector++) {
       if(sector_hash[sector]!=sector)
-	sector_data[sector]->address=sector_data[sector_hash[sector]]->address;
+        sector_data[sector]->address=sector_data[sector_hash[sector]]->address;
       else {
-	sector_data[sector]->address=address;
-	address+=sector_data[sector]->size;
+        sector_data[sector]->address=address;
+        address+=sector_data[sector]->size;
       }
       /* write index page(8),start(16),size(16), 1440 sectors = 1c20 */
       fputc(sector_data[sector]->address/bank_size+2,output); /* page */
@@ -288,33 +288,36 @@ int main(int argc, char* argv[])
       fputc((sector_data[sector]->size)/256,output);
     }
   }
-  
+
   /* write sector data */
-  for(sector=0;sector<total_sectors;sector++)
-    if (sector_hash[sector]==sector)
-      if (safe_mode)
-	for(i=0;i<sector_data[sector]->size;i++) {
-	  if (!(ftell(output)%0x2000))
-	    for (j=0;j<safe_patch_size;j++)
-	      fputc(dsk2rom[safe_patch_offset+j],output);
-	  fputc(sector_data[sector]->data[i],output);
-	}
-      else
-	fwrite(sector_data[sector]->data,1,sector_data[sector]->size,output);
-  
+  for(sector=0;sector<total_sectors;sector++) {
+    if (sector_hash[sector]==sector) {
+      if (safe_mode) {
+        for(i=0;i<sector_data[sector]->size;i++) {
+          if (!(ftell(output)%0x2000))
+            for (j=0;j<safe_patch_size;j++)
+              fputc(dsk2rom[safe_patch_offset+j],output);
+          fputc(sector_data[sector]->data[i],output);
+        }
+      } else {
+        fwrite(sector_data[sector]->data,1,sector_data[sector]->size,output);
+      }
+    }
+  }
+
   /* fill up */
   if (safe_mode) {
       total_size = ftell(output);
       if (total_size<=512*1024)
-	j=512*1024;
-      else 
-	j=1024*1024;
+        j=512*1024;
+      else
+        j=1024*1024;
       while(ftell(output)<j)
-	if (!(ftell(output)%0x2000))
-	  for (i=0;i<safe_patch_size;i++)
-	    fputc(dsk2rom[safe_patch_offset+i],output);
-	else 
-	  fputc(0,output);    
+        if (!(ftell(output)%0x2000))
+          for (i=0;i<safe_patch_size;i++)
+            fputc(dsk2rom[safe_patch_offset+i],output);
+        else
+          fputc(0,output);
   } else {
     if (fillup_rom) {
       total_size = ftell(output);
@@ -322,10 +325,10 @@ int main(int argc, char* argv[])
       for(i=total_size;i<j;i++) fputc(0,output);
     }
   }
-  
+
   /* done; close and cleanup */
   fclose(output);
-  
+
   for(sector=0;sector<total_sectors;sector++) {
     free(sector_data[sector]->data);
     free(sector_data[sector]);
@@ -335,4 +338,3 @@ int main(int argc, char* argv[])
 
   return 0;
 }
-
