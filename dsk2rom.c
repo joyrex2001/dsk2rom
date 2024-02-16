@@ -46,8 +46,131 @@ void showUsage(char *progname)
          " -d   disable exclusive diskrom mode (other diskroms will boot too)\n"
          " -s   safe mode (protect against illegal bank switching)\n"
          " -f   fill up rom to standard rom size\n"
+         " -r   revert rom convertion (create dsk image from previously converted rom)"
          " -v   give verbose information\n", progname);
   return;
+}
+
+int revertToDsk(char *ifile, char *ofile, int verbose) {
+  const char version[] = "DSK2ROM 0.80";
+  int  compress_mode = 0;
+  int  safe_mode = 0;
+
+  int  safe_patch_size = 0;
+  int  bank_size = 0;
+  int  bank_offset = 0;
+
+  SECTOR_DATA *sector_data;
+
+  int romfile_size;
+  unsigned char *romfile;
+  unsigned char *dskfile;
+
+  FILE *output,*input;
+
+  int sector;
+  int total_sectors;
+  int address;
+
+  /***************/
+  /* preperation */
+  /***************/
+
+  /* open input file */
+  if ((input=fopen(ifile,"rb"))==NULL) {
+    fprintf(stderr,"failed opening %s\n",ifile);
+    exit(1);
+  }
+
+  /* Load dsk image data into local buffer */
+  fseek(input,0,SEEK_END);
+  romfile_size = ftell(input);
+  fseek(input,0,SEEK_SET);
+  romfile = (uint8_t *)malloc(romfile_size);
+  fread(romfile,1,romfile_size,input);
+  fclose(input);
+
+  /* check that rom image is a converted dsk file */
+  if (romfile_size > 0x4000 && memcmp(version, &romfile[0x3FE0], sizeof(version)-1)) {
+    fprintf(stderr,"%s is not a rom image created using %s\n",ifile,version);
+    exit(1);
+  }
+
+  /* get info from header */
+  compress_mode = romfile[0x3f00];
+  safe_patch_size = romfile[0x3f08] + (romfile[0x3f09] - 0x40) * 256;
+  safe_mode = (safe_patch_size == 0)?0:1;
+  total_sectors = romfile[0x3f0a] + (romfile[0x3f0b] * 256);
+  safe_patch_size   = safe_mode? romfile[0x3fa2]+romfile[0x3fa3]*256 : 0;
+  bank_size   = 0x2000-safe_patch_size;
+  bank_offset = 0x4000+safe_patch_size;
+
+  if (verbose) printf("compress_mode = %d\nsafe_mode = %d\n",compress_mode,safe_mode);
+
+  /* read sector index */
+  int read_offset = bank_offset;
+  address = total_sectors*5; /* index requires 5 bytes per sector */
+  sector_data = (SECTOR_DATA *)malloc(total_sectors*sizeof(SECTOR_DATA));
+  if (compress_mode>0) {
+    /* read index */
+    int page;
+    for(sector=0;sector<total_sectors;sector++) {
+      page = romfile[read_offset] - 2;
+      sector_data[sector].address = page * bank_size + (romfile[read_offset+1] + romfile[read_offset+2] * 256);
+      sector_data[sector].size = romfile[read_offset+3] + romfile[read_offset+4] * 256;
+      read_offset+=5;
+    }
+  }
+
+  /**************************/
+  /* remove safe patch data */
+  /**************************/
+
+  if (safe_mode) {
+    // We have to remove safe_patch_size bytes for each address %2000 above kernel and headers
+    int current_offset = bank_offset + address - 1;
+    int write_offset = bank_offset + address - 1;
+    while (current_offset < romfile_size) {
+      if (((current_offset) % 0x2000) == 0) {
+        current_offset+=safe_patch_size;
+      }
+      romfile[write_offset++] = romfile[current_offset++];
+    }
+  }
+
+  /*******************/
+  /* write dsk image */
+  /*******************/
+
+  dskfile = (uint8_t *)malloc(total_sectors*sector_size);
+  for(sector=0;sector<total_sectors;sector++) {
+    if (compress_mode == 2) {
+      fprintf(stderr,"%s is Pletter compressed which is not supported yet \n",ifile);
+      free(romfile);
+      free(sector_data);
+      free(dskfile);
+      exit(1);
+    } else if (compress_mode == 1) {
+      memcpy(&dskfile[sector*sector_size],&romfile[sector_data[sector].address],sector_size);
+    } else {
+      memcpy(&dskfile[sector*sector_size],&romfile[bank_offset+sector*sector_size],sector_size);
+    }
+  }
+  free(romfile);
+  free(sector_data);
+
+  /* create output file */
+  if ((output=fopen(ofile,"wb"))==NULL) {
+    fprintf(stderr,"failed creating %s\n",ofile);
+    free(dskfile);
+    exit(1);
+  }
+
+  fwrite(dskfile,1,total_sectors*sector_size,output);
+  fclose(output);
+  free(dskfile);
+
+  return 0;
 }
 
 /**************/
@@ -67,6 +190,7 @@ int main(int argc, char* argv[])
   int  msx1_palette = 0;
   int  exclusive_mode = 1;
   int  safe_mode = 0;
+  int  revert = 0;
 
   int  safe_patch_size = 0;
   int  safe_patch_offset = 0;
@@ -111,6 +235,7 @@ int main(int argc, char* argv[])
         case 'd': exclusive_mode=0; break;
         case 's': safe_mode=1; break;
         case 'v': verbose=1; break;
+        case 'r': revert=1; break;
 
         default:
           fprintf(stderr,"%s: invalid option\n",argv[0]);
@@ -128,6 +253,8 @@ int main(int argc, char* argv[])
   }
 
   if (ifile==NULL || ofile==NULL) { showUsage(argv[0]); exit(1); }
+
+  if (revert) { return revertToDsk(ifile,ofile,verbose);}
 
   if (safe_mode && !compress_mode) compress_mode=1;
 
