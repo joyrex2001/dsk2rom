@@ -21,6 +21,7 @@
 #include <memory.h>
 #include "dsk2rom.h"
 #include "pletter/pletter.h"
+#include "pletter/unpletter.h"
 
 #define plet_mode 9
 #define sector_size 512
@@ -144,12 +145,17 @@ int revertToDsk(char *ifile, char *ofile, int verbose) {
 
   dskfile = (uint8_t *)malloc(total_sectors*sector_size);
   for(sector=0;sector<total_sectors;sector++) {
-    if (compress_mode == 2) {
-      fprintf(stderr,"%s is Pletter compressed which is not supported yet \n",ifile);
-      free(romfile);
-      free(sector_data);
-      free(dskfile);
-      exit(1);
+    if (compress_mode == 2) { // Pletter compression
+      struct Uncompressor uncompressor;
+      if (sector_data[sector].size == sector_size) { // Sector has been stored uncompressed
+        memcpy(&dskfile[sector*sector_size],&romfile[sector_data[sector].address],sector_size);
+      } else { // Sector is pletter compressed, decompress it
+        uncompressor.compressedData = &romfile[sector_data[sector].address];
+        uncompressor.dataPosition = 0;
+        uncompressor.varPosition = 0;
+        uncompressor.bitForVarPosition = 7;
+        uncompress(&uncompressor, sector_data[sector].size, &dskfile[sector*sector_size]);
+      }
     } else if (compress_mode == 1) {
       memcpy(&dskfile[sector*sector_size],&romfile[sector_data[sector].address],sector_size);
     } else {

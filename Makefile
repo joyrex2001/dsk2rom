@@ -18,10 +18,12 @@ bin2h: bin2h.c
 
 pletter/pletter.o: pletter/pletter.cpp
 
+pletter/unpletter.o: pletter/unpletter.c
+
 dsk2rom.h: bin2h
 	$(shell ./${bin2h_e} dsk2rom dsk2rom.rom dsk2rom.h)
 
-dsk2rom: dsk2rom.c pletter/pletter.o
+dsk2rom: dsk2rom.c pletter/pletter.o pletter/unpletter.o
 	$(CC) $(CFLAGS) $^ -o $(dsk2rom_e)
 
 clean:
