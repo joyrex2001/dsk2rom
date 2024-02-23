@@ -85,7 +85,8 @@ by Arjen Zeilemaker. The pletter compression used in the kernel and tooling is
 made by Sjoerd Mastijn, which was based on Bitbuster by Arjan Bakker. A thank
 you to Arturo Ragozini for suggesting to use pletter compression. A lot of
 thanks go to Ramones for his testing and diskrom kernel hacking, and not to
-forget his GETDPB implementation included in the kernel.
+forget his GETDPB implementation included in the kernel. Another thank you to
+Sylver Bruneau for contributing the decoding of dsk2rom roms backs to dsks.
 Thanks to Sylvain Glaize who wrote the c implementation of pletter decompression
 allowing to revert pletter compressed roms : https://gitea.zaclys.com/Mokona/Unpletter .
 
