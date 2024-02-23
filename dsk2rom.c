@@ -47,7 +47,7 @@ void showUsage(char *progname)
          " -d   disable exclusive diskrom mode (other diskroms will boot too)\n"
          " -s   safe mode (protect against illegal bank switching)\n"
          " -f   fill up rom to standard rom size\n"
-         " -r   revert rom convertion (create dsk image from previously converted rom)"
+         " -r   revert rom convertion (create dsk image from previously converted rom)\n"
          " -v   give verbose information\n", progname);
   return;
 }
