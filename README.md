@@ -68,6 +68,16 @@ rom, and the -f option to create rom images in standard sizes (2^sizes).
 This should be enough info to start converting .dsk images to .rom images.
 Good luck!
 
+### Reverse to .dsk support
+
+A -r option has been added to allow to create back a dsk image from a rom created
+using dsk2rom tool. All compression modes are supported and roms with safe mode are
+also supported.
+
+example of creating a .dsk image from a .rom created with dsk2rom tool
+
+ * `dsk2rom -r alesteg.rom alesteg.dsk`
+
 ### Acknowledgements and thanks
 
 DSK2ROM by Vincent van Dam. The kernel was based on the disassembled diskroms
@@ -76,6 +86,8 @@ made by Sjoerd Mastijn, which was based on Bitbuster by Arjan Bakker. A thank
 you to Arturo Ragozini for suggesting to use pletter compression. A lot of
 thanks go to Ramones for his testing and diskrom kernel hacking, and not to
 forget his GETDPB implementation included in the kernel.
+Thanks to Sylvain Glaize who wrote the c implementation of pletter decompression
+allowing to revert pletter compressed roms : https://gitea.zaclys.com/Mokona/Unpletter .
 
 ### Version history
 
